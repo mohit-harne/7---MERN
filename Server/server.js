@@ -6,7 +6,7 @@ const app = express();
 
 // CORS options
 const corsOptions = {
-    origin: "http://localhost:5173", // Adjust this to allow your frontend app
+    origin: "https://7-mern.vercel.app/user", // Adjust this to allow your frontend app
     optionsSuccessStatus: 200 // For legacy browser support
 };
 
