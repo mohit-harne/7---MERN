@@ -8,7 +8,7 @@ export const fetchUserList = createAsyncThunk(
   'users/fetchUserList',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("https://7-mern.vercel.app/user/");
+      const response = await axios.get("https://7-mern.vercel.app/");
       console.log('Fetched user list:', response.data); // Log the fetched data
       return response.data;
     } catch (error) {
@@ -22,7 +22,7 @@ export const addUser = createAsyncThunk(
   'users/addUser',
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("https://7-mern.vercel.app/user/addUser", userData);
+      const response = await axios.post("https://7-mern.vercel.app/addUser", userData);
       toast.success("User Added Successfully");
       return response.data;
     } catch (error) {
@@ -36,7 +36,7 @@ export const updateUser = createAsyncThunk(
   'users/updateUser',
   async ({ userId, userData }, { rejectWithValue }) => {
     try {
-      await axios.put(`https://7-mern.vercel.app/user/edit/${userId}`, userData);
+      await axios.put(`https://7-mern.vercel.app/edit/${userId}`, userData);
       toast.success("User Updated Successfully");
       return userId; // Return the ID of the updated user
     } catch (error) {
@@ -52,7 +52,7 @@ export const deleteUser = createAsyncThunk(
   async (userId, { rejectWithValue, dispatch }) => {
     if (window.confirm("Do you want to remove?")) {
       try {
-        await axios.delete(`https://7-mern.vercel.app/user/${userId}`);
+        await axios.delete(`https://7-mern.vercel.app/${userId}`);
         dispatch(fetchUserList()); // Refetch user list after deletion
         return userId; // Return the deleted user ID
       } catch (error) {
@@ -67,7 +67,7 @@ export const fetchUserObj = createAsyncThunk(
   'users/fetchUserObj',
   async (userId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`https://7-mern.vercel.app/user/fetchUserObj/${userId}`);
+      const response = await axios.get(`https://7-mern.vercel.app/fetchUserObj/${userId}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.message);
