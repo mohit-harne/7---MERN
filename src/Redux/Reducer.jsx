@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 // Thunks for asynchronous actions
+
 // Fetch user list
 export const fetchUserList = createAsyncThunk(
   'users/fetchUserList',
@@ -10,8 +11,15 @@ export const fetchUserList = createAsyncThunk(
     try {
       const response = await axios.get("https://7-mern.vercel.app/");
       console.log('Fetched user list:', response.data); // Log the fetched data
+      
+      // Check if the response data is an array
+      if (!Array.isArray(response.data)) {
+        throw new Error("Expected an array of users");
+      }
+
       return response.data;
     } catch (error) {
+      console.error('Fetch user list failed:', error); // Log the error
       return rejectWithValue(error.message);
     }
   }
@@ -63,6 +71,7 @@ export const deleteUser = createAsyncThunk(
   }
 );
 
+// Fetch user by ID
 export const fetchUserObj = createAsyncThunk(
   'users/fetchUserObj',
   async (userId, { rejectWithValue }) => {
@@ -75,9 +84,8 @@ export const fetchUserObj = createAsyncThunk(
   }
 );
 
-
 // User slice
- const dataSlice = createSlice({
+const dataSlice = createSlice({
   name: 'users',
   initialState: {
     userList: [],
@@ -95,7 +103,7 @@ export const fetchUserObj = createAsyncThunk(
       })
       .addCase(fetchUserList.fulfilled, (state, action) => {
         state.loading = false;
-        state.userList = action.payload;
+        state.userList = action.payload; // Set the user list to fetched data
       })
       .addCase(fetchUserList.rejected, (state, action) => {
         state.loading = false;
@@ -108,7 +116,7 @@ export const fetchUserObj = createAsyncThunk(
       })
       .addCase(addUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.userList.push(action.payload);
+        state.userList.push(action.payload); // Add the new user to the list
       })
       .addCase(addUser.rejected, (state, action) => {
         state.loading = false;
@@ -121,6 +129,7 @@ export const fetchUserObj = createAsyncThunk(
       })
       .addCase(updateUser.fulfilled, (state, action) => {
         state.loading = false;
+        // Update the user in the list
         state.userList = state.userList.map(user =>
           user.id === action.payload ? { ...user, ...action.meta.arg.userData } : user
         );
@@ -136,6 +145,7 @@ export const fetchUserObj = createAsyncThunk(
       })
       .addCase(deleteUser.fulfilled, (state, action) => {
         state.loading = false;
+        // Remove the deleted user from the list
         state.userList = state.userList.filter(user => user.id !== action.payload);
       })
       .addCase(deleteUser.rejected, (state, action) => {
@@ -149,7 +159,7 @@ export const fetchUserObj = createAsyncThunk(
       })
       .addCase(fetchUserObj.fulfilled, (state, action) => {
         state.loading = false;
-        state.userObj = action.payload;
+        state.userObj = action.payload; // Set the user object
       })
       .addCase(fetchUserObj.rejected, (state, action) => {
         state.loading = false;
@@ -158,12 +168,10 @@ export const fetchUserObj = createAsyncThunk(
   }
 });
 
-
-
 // Selectors to get the state data
 export const selectUserList = (state) => state.users.userList;
 export const selectUserObj = (state) => state.users.userObj;
 export const selectLoadingStatus = (state) => state.users.loading;
-export const selectErrorMessage = (state) => state.users?.errorMessage;
+export const selectErrorMessage = (state) => state.users.errorMessage;
 
 export default dataSlice.reducer;
